@@ -1,4 +1,5 @@
 import uvicorn
+from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 import google.generativeai as genai
@@ -10,10 +11,9 @@ import time
 app = FastAPI()
 
 @app.get("/")
-async def home():
-    return {"message": "Caption Agent API deployed successfully"}
 def read_index():
-    return FileResponse(os.path.join(os.getcwd(), "index.html"))
+    index_file = ROOT / "index.html"
+    return FileResponse(index_file)
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
@@ -75,3 +75,5 @@ async def generate_caption(file: UploadFile = File(...), style: str = Form(...))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+ROOT = Path(__file__).resolve().parent
