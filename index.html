@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captions.io | Stylish Caption Gen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-bg: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --primary: #FF6B6B;
+            --text: #2D3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-image: var(--gradient-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text);
+        }
+
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #FF6B6B, #556270);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: #636e72;
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 3px dashed #dfe6e9;
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .upload-area input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        #preview-container {
+            margin-top: 15px;
+            display: none;
+        }
+
+        #preview-img,
+        #preview-video {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 20px;
+            display: none;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left;
+            border: 2px solid #f1f2f6;
+        }
+
+        .result-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #b2bec3;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .caption-content {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #2d3436;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            display: none;
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captions.io | Stylish Caption Gen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-bg: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --primary: #FF6B6B;
+            --text: #2D3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-image: var(--gradient-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text);
+        }
+
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #FF6B6B, #556270);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: #636e72;
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 3px dashed #dfe6e9;
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .upload-area input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        #preview-container {
+            margin-top: 15px;
+            display: none;
+        }
+
+        #preview-img,
+        #preview-video {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 20px;
+            display: none;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left;
+            border: 2px solid #f1f2f6;
+        }
+
+        .result-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #b2bec3;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .caption-content {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #2d3436;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            display: none;
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    </head>
+
+    <body>
+
+        <div class="container">
+            <h1>Captions.io ⚡</h1>
+            <p class="subtitle">Turn your pics into trendy captions instantly.</p>
+
+            <div class="upload-area" id="drop-zone">
+                <span class="icon">📸</span>
+                <span id="upload-text">Tap to upload image/video</span>
+                <input type="file" id="fileInput" accept="image/*,video/*" onchange="handleFile(this)">
+
+                <div id="preview-container">
+                    <img id="preview-img" style="display:none;">
+                    <video id="preview-video" controls style="display:none;"></video>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <select id="styleSelect"
+                    style="width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #dfe6e9; font-size: 1rem; color: #2d3436; outline: none; cursor: pointer;">
+                    <option value="viral">🚀 Viral Hook</option>
+                    <option value="story">📖 Storyteller</option>
+                    <option value="witty">😜 Witty & Fun</option>
+                    <option value="engagement">💬 Engagement Bait</option>
+                </select>
+            </div>
+
+            <button onclick="generateCaption()" id="genBtn">✨ Stylize My Post</button>
+            <div class="loader" id="loader"></div>
+
+            <div id="result">
+                <div class="result-title">Your Vibe</div>
+                <div class="caption-content" id="captionText"></div>
+                <button
+                    onclick="navigator.clipboard.writeText(document.getElementById('captionText').innerText); this.innerText='Copied! ✅'; setTimeout(()=>this.innerText='Copy Caption', 2000)"
+                    style="background: #2d3436; color: white; padding: 10px 20px; font-size: 0.9rem; width: auto; margin-top: 15px; box-shadow: none;">
+                    Copy Caption
+                </button>
+            </div>
+        </div>
+
+        <script>
+            function handleFile(input) {
+                const file = input.files[0];
+                if (file) {
+                    document.getElementById('upload-text').style.display = 'none';
+                    document.querySelector('.icon').style.display = 'none';
+                    const previewContainer = document.getElementById('preview-container');
+                    const img = document.getElementById('preview-img');
+                    const vid = document.getElementById('preview-video');
+
+                    previewContainer.style.display = 'block';
+                    img.style.display = 'none';
+                    vid.style.display = 'none';
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        if (file.type.startsWith('image/')) {
+                            img.src = e.target.result;
+                            img.style.display = 'block';
+                        } else if (file.type.startsWith('video/')) {
+                            vid.src = e.target.result;
+                            vid.style.display = 'block';
+                        }
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            async function generateCaption() {
+                const fileInput = document.getElementById('fileInput');
+                const styleSelect = document.getElementById('styleSelect');
+                const btn = document.getElementById('genBtn');
+                const loader = document.getElementById('loader');
+                const resultDiv = document.getElementById('result');
+                const captionText = document.getElementById('captionText');
+
+                if (!fileInput.files[0]) {
+                    alert("Yo! You gotta upload something first! 📸");
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.innerText = "Cooking up vibes... 🍳";
+                loader.style.display = 'block';
+                resultDiv.style.display = 'none';
+
+                const formData = new FormData();
+                formData.append("file", fileInput.files[0]);
+                formData.append("style", styleSelect.value);
+
+                try {
+                    const response = await fetch('http://localhost:8000/generate', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) throw new Error('Vibe check failed (Server Error)');
+
+                    const data = await response.json();
+                    captionText.innerText = data.caption;
+
+                    resultDiv.style.display = 'block';
+                    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                } catch (error) {
+                    alert("Something went wrong! Is the backend running?");
+                    console.error(error);
+                } finally {
+                    loader.style.display = 'none';
+                    btn.disabled = false;
+                    btn.innerText = "✨ Stylize My Post";
+                }
+            }
+        </script>
+
+    </body>
+
+</html>
